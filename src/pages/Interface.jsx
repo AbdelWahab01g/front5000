@@ -1,28 +1,50 @@
 import React, { useState } from "react";
 import { Home, Settings, User, Layers } from "lucide-react";
-import GeoServerTimeLayer from "../components/Timedimention";
-import temp from "../imgs/background0.jpeg";
+import Timedimention from "../components/Timedimention";
+import LayerOne from "../components/LayerOne";
+import Layertow from "../components/Layertow";
+import Layerthree from "../components/Layerthree";
+import Layer4 from "../components/Layer4";
+import temprature from "../imgs/background0.jpeg";
+import rainimg from "../imgs/rain-img.jpg";
+import wind from "../imgs/Wind-img.jpg";
 
 const layers = [
-  { id: 1, title: "Temperature", imgSrc: temp },
-  { id: 2, title: "Layer 2", imgSrc: "layer2.png" },
-  { id: 3, title: "Layer 3", imgSrc: "layer3.png" },
-  { id: 4, title: "Layer 4", imgSrc: "layer4.png" },
+  { id: 1, title: "Temperature", imgSrc: temprature },
+  { id: 2, title: "Humidity", imgSrc: rainimg },
+  { id: 3, title: "Eastward-Wind", imgSrc: wind },
+  { id: 4, title: "Northward-Wind", imgSrc: wind },
   { id: 5, title: "Layer 5", imgSrc: "layer5.png" },
   { id: 6, title: "Layer 6", imgSrc: "layer6.png" },
-  { id: 7, title: "Layer 7", imgSrc: "layer7.png" },
 ];
 
 export default function Interface() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [layersVisible, setLayersVisible] = useState(true);
-  const [activeLayer, setActiveLayer] = useState(layers[0].id);
+  const [activeLayer, setActiveLayer] = useState(1); // Default to Temperature
+
+  const renderActiveLayer = () => {
+    switch (activeLayer) {
+      case 1:
+        return <Timedimention />;
+      case 2:
+        return <LayerOne />;
+      case 3:
+        return <Layertow />;
+      case 4:
+        return <Layerthree />;
+      case 5:
+        return <Layer4 />;
+      default:
+        return <Timedimention />;
+    }
+  };
 
   return (
     <div className="relative w-full h-screen overflow-hidden">
       {/* Main Content */}
       <div className="absolute inset-0">
-        {activeLayer && <GeoServerTimeLayer layerId={activeLayer} />}
+        {renderActiveLayer()}
       </div>
 
       {/* Sidebar */}
@@ -33,7 +55,7 @@ export default function Interface() {
       >
         <div className="flex-1 flex flex-col justify-between p-4">
           <button
-            className="w-[200px] mb-4 p-2 bg-gray-800 text-white rounded self-center"
+            className="w-[250px] mb-4 mr-4 p-2 bg-gray-800 text-white rounded self-center"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             {sidebarOpen ? "Close Sidebar" : "Open Sidebar"}
@@ -41,20 +63,20 @@ export default function Interface() {
 
           {/* Layer List */}
           {layersVisible && (
-            <div className="space-y-4 overflow-y-auto max-h-[80vh] pr-2">
+            <div className="space-y-4 overflow-y-auto max-h-[90vh] pr-2">
               {layers.map((layer) => (
                 <div
                   key={layer.id}
                   className={`p-4 rounded cursor-pointer transition-colors ${
-                    activeLayer === layer.id 
-                      ? "bg-blue-300 shadow-md" 
+                    activeLayer === layer.id
+                      ? "bg-blue-300 shadow-md"
                       : "bg-gray-200 hover:bg-gray-300"
                   }`}
                   onClick={() => setActiveLayer(layer.id)}
                 >
-                  <img 
-                    src={layer.imgSrc} 
-                    alt={layer.title} 
+                  <img
+                    src={layer.imgSrc}
+                    alt={layer.title}
                     className="w-full h-28 object-cover rounded-md"
                   />
                   <p className="text-center mt-2 text-lg font-semibold">
@@ -68,22 +90,16 @@ export default function Interface() {
 
         {/* Icons Section */}
         <div className="flex flex-col justify-center items-center space-y-4 p-4 bg-gray-300 rounded-l-lg">
-          <div 
+          <div
             className={`p-3 rounded-full cursor-pointer transition-colors ${
               !layersVisible ? "bg-blue-400" : "hover:bg-gray-400"
-            }`} 
+            }`}
             onClick={() => setLayersVisible(!layersVisible)}
           >
             <Layers size={28} />
           </div>
           <div className="p-3 hover:bg-gray-400 rounded-full cursor-pointer transition-colors">
             <Home size={28} />
-          </div>
-          <div className="p-3 hover:bg-gray-400 rounded-full cursor-pointer transition-colors">
-            <Settings size={28} />
-          </div>
-          <div className="p-3 hover:bg-gray-400 rounded-full cursor-pointer transition-colors">
-            <User size={28} />
           </div>
         </div>
       </div>

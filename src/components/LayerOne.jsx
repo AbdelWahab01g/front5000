@@ -5,7 +5,6 @@ import "leaflet-timedimension/dist/leaflet.timedimension.control.css";
 import "leaflet-timedimension";
 import L from "leaflet";
 
-// Helper function to fetch times from WMS GetCapabilities
 const fetchWMSTimes = async (wmsUrl, layerName) => {
   const url = `${wmsUrl}?service=WMS&version=1.1.1&request=GetCapabilities`;
   const response = await fetch(url);
@@ -22,7 +21,7 @@ const fetchWMSTimes = async (wmsUrl, layerName) => {
         const timeString = extent.textContent.trim();
         const times = timeString.includes(",")
           ? timeString.split(",")
-          : generateTimeStepsFromInterval(timeString); // If it's a range with steps
+          : generateTimeStepsFromInterval(timeString);
         return times;
       }
     }
@@ -30,7 +29,6 @@ const fetchWMSTimes = async (wmsUrl, layerName) => {
   return [];
 };
 
-// If times are given as a range, like "2024-11-09T00:00:00Z/2024-11-10T00:00:00Z/PT1H"
 const generateTimeStepsFromInterval = (rangeStr) => {
   const [startStr, endStr, stepStr] = rangeStr.split("/");
   const start = new Date(startStr);
@@ -41,7 +39,7 @@ const generateTimeStepsFromInterval = (rangeStr) => {
     PT1H: 3600000,
     PT3H: 10800000,
     PT6H: 21600000,
-  }[stepStr] || 3600000; // Default to 1 hour
+  }[stepStr] || 3600000;
 
   for (let t = start; t <= end; t = new Date(t.getTime() + stepInMs)) {
     times.push(t.toISOString());
@@ -60,7 +58,7 @@ const TimeDimensionWMSLayer = ({ times }) => {
     }
 
     const wmsLayer = L.tileLayer.wms("/geoserver/Aromwork/wms?", {
-      layers: "t2mWorckfile",
+      layers: "r-layer-01",
       format: "image/png",
       transparent: true,
       version: "1.1.1",
@@ -90,12 +88,12 @@ const TimeDimensionWMSLayer = ({ times }) => {
   return null;
 };
 
-const GeoServerTimeLayer = () => {
+const LayerOne = () => {
   const [times, setTimes] = useState([]);
 
   useEffect(() => {
     const getTimes = async () => {
-      const fetchedTimes = await fetchWMSTimes("/geoserver/Aromwork/wms", "t2mWorckfile");
+      const fetchedTimes = await fetchWMSTimes("/geoserver/Aromwork/wms", "r-layer-01");
       setTimes(fetchedTimes);
     };
     getTimes();
@@ -112,4 +110,4 @@ const GeoServerTimeLayer = () => {
   );
 };
 
-export default GeoServerTimeLayer;
+export default LayerOne;
